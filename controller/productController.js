@@ -2,7 +2,7 @@ const Product = require("../models/Product");
 
 const getProductByCategory = async (req, res) => {
   try {
-    const product = await Product.find({ category: req.body.category });
+    const product = await Product.find({ category: req.params.category });
     const productArr = [];
     for (const element of product) {
         !productArr.includes(element.collection_name) ? productArr.push(element.collection_name) : ""
