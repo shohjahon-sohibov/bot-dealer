@@ -1,11 +1,24 @@
 const Product = require("../models/Product");
+const { SERVERLINK } = require("../config/config");
+
+const getAllProducts = async (req, res) => {
+  try {
+    res.json(await Product.find());
+  } catch (err) {
+    res.status(500).send({
+      message: `category problem, ${err.message}`,
+    });
+  }
+};
 
 const getProductByCategory = async (req, res) => {
   try {
-    const product = await Product.find({ category: req.params.category });
+    const product = await Product.find({ category: req.params.name });
     const productArr = [];
     for (const element of product) {
-        !productArr.includes(element.collection_name) ? productArr.push(element.collection_name) : ""
+      !productArr.includes(element.collection_name)
+        ? productArr.push(element.collection_name)
+        : "";
     }
     res.send(productArr);
   } catch (err) {
@@ -18,9 +31,8 @@ const getProductByCategory = async (req, res) => {
 const getProductByCollection = async (req, res) => {
   try {
     const product = await Product.find({
-      collection_name: req.params.collection_name,
+      collection_name: req.params.name,
     });
-    console.log(product, "getProductByCollection");
     res.send(product);
   } catch (err) {
     res.status(500).send({
@@ -31,7 +43,22 @@ const getProductByCollection = async (req, res) => {
 
 const addProduct = async (req, res) => {
   try {
-    const newProduct = new Product(req.body);
+    const { code, category, collection_name, color, description } = req.body;
+
+    let imagesArr = [];
+    const file = req.file;
+    const imgUrl = `${SERVERLINK}/upload/${file.originalname}`;
+    imagesArr.push(imgUrl);
+    const [image] = imagesArr;
+
+    const newProduct = new Product({
+      code,
+      category,
+      collection_name,
+      color,
+      description,
+      image
+    });
     await newProduct.save();
     res.status(200).send({
       message: "Product Added Successfully!",
@@ -76,6 +103,7 @@ const deleteProduct = (req, res) => {
 };
 
 module.exports = {
+  getAllProducts,
   getProductByCategory,
   getProductByCollection,
   addProduct,

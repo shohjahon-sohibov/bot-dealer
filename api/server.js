@@ -14,7 +14,7 @@ app.get("/", (_, res) => {
   res.send("App works properly!");
 });
 
-// app.use("*", (_, res) => {
+// app.get("*", (_, res) => {
 //   res.json("endpoint wrong!");
 // });
 

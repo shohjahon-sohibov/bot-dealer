@@ -1,37 +1,47 @@
 const express = require("express");
 const router = express.Router();
 
+// controllers
 const {
-  addProduct,
-  updateProduct,
+  getAllProducts,
   getProductByCategory,
   getProductByCollection,
+  addProduct,
+  updateProduct,
   deleteProduct,
 } = require("../controller/productController");
 
-/**
- * add a product
- */
-router.post("/add", addProduct);
+// middlewares
+const upload = require('../middlewares/multer')
 
 /**
- * update a product
+ * get all products
  */
-router.put("/update/:id", updateProduct);
+router.get("/all", getAllProducts);
 
 /**
  * get products by category
  */
-router.get("/category", getProductByCategory);
+router.get("/category/:name", getProductByCategory);
 
 /**
  * get products by collection
  */
-router.get("/collection", getProductByCollection);
+router.get("/collection/:name", getProductByCollection);
 
 /**
- * delete a product 
+ * add a product
  */
-router.delete("/delete/:id", deleteProduct);
+router.post("/add", upload.single("image"), addProduct);
+
+/**
+ * update a product
+ */
+router.put("/update/:id", upload.single("image"), updateProduct);
+
+/**
+ * delete a product
+ */
+router.delete("/delete/:id", upload.single("image"), deleteProduct);
 
 module.exports = router;
